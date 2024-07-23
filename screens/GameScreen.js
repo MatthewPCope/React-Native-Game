@@ -1,54 +1,59 @@
-import { View, Text, StyleSheet } from 'react-native';
-import Title from '../components/ui/Title';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+
 import { useState } from 'react';
-import PrimaryButton from '../constants/ui/PrimaryButton';
-import NumberContainer from '../components/ui/game/NumberContainer';
+import NumberContainer from '../components/NumberContainer';
+import PrimaryButton from '../components/PrimaryButton';
+import Title from '../components/Title';
 
 function generateRandomBetween(min, max, exclude) {
     const rndNum = Math.floor(Math.random() * (max - min)) + min;
-
+  
     if (rndNum === exclude) {
-        return generateRandomBetween(min, max, exclude);
+      return generateRandomBetween(min, max, exclude);
     } else {
-        return rndNum;
+      return rndNum;
     }
-}
-
-function GameScreen({ userNumber }) {
+  }
+  
+  let minBoundary = 1;
+  let maxBoundary = 100;
+  
+  function GameScreen({ userNumber }) {
     const initialGuess = generateRandomBetween(
+      minBoundary,
+      maxBoundary,
+      userNumber
+    );
+    const [currentGuess, setCurrentGuess] = useState(initialGuess);
+  
+    function nextGuessHandler(direction) {
+      // direction => 'lower', 'greater'
+      if (
+        (direction === 'lower' && currentGuess < userNumber) ||
+        (direction === 'greater' && currentGuess > userNumber)
+      ) {
+        Alert.alert("Don't lie!", 'You know that this is wrong...', [
+          { text: 'Sorry!', style: 'cancel' },
+        ]);
+        return;
+      }
+  
+      if (direction === 'lower') {
+        maxBoundary = currentGuess;
+      } else {
+        minBoundary = currentGuess + 1;
+      }
+  
+      const newRndNumber = generateRandomBetween(
         minBoundary,
         maxBoundary,
-        userNumber
+        currentGuess
       );
-      const [currentGuess, setCurrentGuess] = useState(initialGuess);
-    
-      function nextGuessHandler(direction) {
-        // direction => 'lower', 'greater'
-        if (
-          (direction === 'lower' && currentGuess < userNumber) ||
-          (direction === 'greater' && currentGuess > userNumber)
-        ) {
-          Alert.alert("Don't lie!", 'You know that this is wrong...', [
-            { text: 'Sorry!', style: 'cancel' },
-          ]);
-          return;
-        }
-    
-        if (direction === 'lower') {
-          maxBoundary = currentGuess;
-        } else {
-          minBoundary = currentGuess + 1;
-        }
-    
-        const newRndNumber = generateRandomBetween(
-          minBoundary,
-          maxBoundary,
-          currentGuess
-        );
-        setCurrentGuess(newRndNumber);
-      }
+      setCurrentGuess(newRndNumber);
+    }
+  
     return (
-        <View style={styles.screen}>
+      <View style={styles.screen}>
         <Title>Opponent's Guess</Title>
         <NumberContainer>{currentGuess}</NumberContainer>
         <View>
@@ -65,14 +70,13 @@ function GameScreen({ userNumber }) {
         {/* <View>LOG ROUNDS</View> */}
       </View>
     );
-}
-
-export default GameScreen;
-
-const styles = StyleSheet.create({
-        screen: {
-        flex: 1,
-        padding: 24
-    }
-    
-});
+  }
+  
+  export default GameScreen;
+  
+  const styles = StyleSheet.create({
+    screen: {
+      flex: 1,
+      padding: 24,
+    },
+  });
