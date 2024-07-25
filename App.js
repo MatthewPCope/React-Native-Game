@@ -5,6 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import GameScreen from './screens/GameScreen';
 import Colors from './constants/colors';
 
+
 export default function App() {
   const [userNumber, setUserNumber] = useState()
 

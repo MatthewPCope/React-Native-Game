@@ -7,7 +7,7 @@ function PrimaryButton({ children, onPress }) {
     <View style={styles.buttonOuterContainer}>
         <Pressable
         style={({ pressed }) =>
-             pressed
+            pressed
             ? [styles.buttonInnerContainer, styles.pressed]
             : styles.buttonInnerContainer
         }
